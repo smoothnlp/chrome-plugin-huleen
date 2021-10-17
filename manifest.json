@@ -1,0 +1,32 @@
+{
+  "name": "chrome-plugin-test",
+  "description": "chrome-plugin-test",
+  "version": "0.0.1",
+  "icons": {},
+  "manifest_version": 2,
+  "content_security_policy": "style-src 'unsafe-inline'; default-src 'self'",
+  "minimum_chrome_version": "22",
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ],
+    "persistent": false
+  },
+  "permissions": [
+    "clipboardRead",
+    "clipboardWrite"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "css": [],
+      "js": [
+        "js/copy.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ]
+}
