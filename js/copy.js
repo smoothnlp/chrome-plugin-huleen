@@ -2,23 +2,18 @@ var hotkeys = [];
 chrome.extension.sendMessage(
   { "type" : "config" },
   function () {
-    // document.body.addEventListener("mouseup", autoCopyW, false);
     document.body.addEventListener('keydown', function (event) {
+      // event.stopPropagation
+      event.preventDefault()
       hotkeys.push(event.key)
       if (hotkeys.length > 3) {
         hotkeys.shift()
       }
     }, false)
-    document.body.addEventListener('keyup', autoCopyW, false)
+    document.body.addEventListener('keyup', autoCopy, false)
   }
 );
 
-function autoCopyW(e) {
-  if (hotkeys.toString() === 'Control,Shift,C') {
-    // console.log(hotkeys)
-    autoCopy(e);
-  }
-}
 
 function guid(rawid = '') {
   rawid = rawid ? rawid : 'xyxxxxxyx'
@@ -30,21 +25,24 @@ function guid(rawid = '') {
   })
 }
 
-function autoCopy(e) {
-  var copyText = window.getSelection().toString();
-  var pageUrl = window.location.href
-  var encodedUrl = encodeURI(pageUrl.split('#')[0])
-  if (copyText) {
-    encodedUrl += '#:~:text=' + copyText
+function autoCopy(event) {
+  console.log(hotkeys)
+  if (hotkeys.toString() === 'Control,Shift,C') {
+    var copyText = window.getSelection().toString();
+    var pageUrl = window.location.href
+    var encodedUrl = encodeURI(pageUrl.split('#')[0])
+    if (copyText) {
+      encodedUrl += '#:~:text=' + copyText
+    }
+    chrome.extension.sendMessage({
+      "text": copyText,
+      "href": encodedUrl,
+      "title": document.title,
+      "id": guid(),
+      "type": 'smartlink-inline',
+      "data-target-id": encodedUrl,
+      "data-target-type": 'webs',
+      "data-target-origin-text": copyText
+    });
   }
-  chrome.extension.sendMessage({
-    "text": copyText,
-    "href": encodedUrl,
-    "title": document.title,
-    "id": guid(),
-    "type": 'smartlink-inline',
-    "data-target-id": encodedUrl,
-    "data-target-type": 'webs',
-    "data-target-origin-text": copyText
-  });
 }
