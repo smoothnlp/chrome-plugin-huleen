@@ -1,13 +1,16 @@
 var hotkeys = [];
+var copyCommand = 'Control,Shift,C'
 chrome.extension.sendMessage(
   { "type" : "config" },
   function () {
     document.body.addEventListener('keydown', function (event) {
-      // event.stopPropagation
-      event.preventDefault()
       hotkeys.push(event.key)
       if (hotkeys.length > 3) {
         hotkeys.shift()
+      }
+      console.log(hotkeys.toString())
+      if (hotkeys.toString() === copyCommand) {
+        event.preventDefault()
       }
     }, false)
     document.body.addEventListener('keyup', autoCopy, false)
@@ -27,7 +30,7 @@ function guid(rawid = '') {
 
 function autoCopy(event) {
   console.log(hotkeys)
-  if (hotkeys.toString() === 'Control,Shift,C') {
+  if (hotkeys.toString() === copyCommand) {
     var copyText = window.getSelection().toString();
     var pageUrl = window.location.href
     var encodedUrl = encodeURI(pageUrl.split('#')[0])
