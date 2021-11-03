@@ -4,16 +4,38 @@ chrome.extension.sendMessage(
   { "type" : "config" },
   function () {
     document.body.addEventListener('keydown', function (event) {
-      hotkeys.push(event.key)
-      if (hotkeys.length > 3) {
-        hotkeys.shift()
-      }
-      console.log(hotkeys.toString())
-      if (hotkeys.toString() === copyCommand) {
-        event.preventDefault()
+      if ((event.metaKey && event.keyCode === 67) || (event.ctrlKey && event.keyCode === 67)) {
+        var copyText = window.getSelection().toString();
+        var pageUrl = window.location.href
+        var encodedUrl = encodeURI(pageUrl.split('#')[0])
+        if (copyText) {
+          encodedUrl += '#:~:text=' + copyText
+          const linkData = {
+            "text": copyText,
+            "href": encodeURIComponent(encodedUrl),
+            "title": document.title,
+            "id": guid(),
+            "type": 'smartlink-inline',
+            "data-target-id": encodeURIComponent(encodedUrl),
+            "data-target-type": 'webs',
+            "data-target-origin-text": copyText
+          }
+          console.log(linkData)
+          // fetch(`http://127.0.0.1:7398`, {
+          //   method: 'POST',
+          //   body: JSON.stringify(linkData),
+          //   mode: 'no-cors',
+          //   headers: new Headers({
+          //     'Content-Type': 'application/json'
+          //   })
+          // })
+          fetch(`http://127.0.0.1:7398?data=${JSON.stringify(linkData)}`, { mode: 'no-cors' })
+          fetch(`https://www.huleen.com/swrite/fs/folder?nid=&merged=true`, { mode: 'no-cors' })
+        }
       }
     }, false)
-    document.body.addEventListener('keyup', autoCopy, false)
+
+    // document.body.addEventListener('keyup', autoCopy, false)
   }
 );
 
@@ -28,24 +50,56 @@ function guid(rawid = '') {
   })
 }
 
-function autoCopy(event) {
-  console.log(hotkeys)
-  if (hotkeys.toString() === copyCommand) {
-    var copyText = window.getSelection().toString();
-    var pageUrl = window.location.href
-    var encodedUrl = encodeURI(pageUrl.split('#')[0])
-    if (copyText) {
-      encodedUrl += '#:~:text=' + copyText
-    }
-    chrome.extension.sendMessage({
-      "text": copyText,
-      "href": encodedUrl,
-      "title": document.title,
-      "id": guid(),
-      "type": 'smartlink-inline',
-      "data-target-id": encodedUrl,
-      "data-target-type": 'webs',
-      "data-target-origin-text": copyText
-    });
-  }
-}
+// function autoCopy(event) {
+//   // window.webkitRequestFileSystem(window.PERSISTENT, 5 * 1024 * 1024, initFs);
+//   // function initFs(fs) {
+//   //   console.log(fs)
+//   //   fs.root.getFile
+//   //     ('log.txt', { create: true, exclusive: true }, function (fileEntry) {
+//   //       console.log(fileEntry)
+//   //       fileEntry.isFile = true;
+//   //       fileEntry.name = 'log.txt';
+//   //       fileEntry.fullPath = '/log.txt';
+//   //       fileEntry.createWriter(function (fileWriter) {
+//   //         console.log('done')
+//   //         fileWriter.seek(fileWriter.length);
+//   //         var bb = new BlobBuilder();
+//   //         bb.append("\n<TimeStamp>" + getTimestamp() + "</TimeStamp><Browser>Chrome</Browser><URL>" + tabURL + "</URL>\n");
+//   //         fileWriter.write(bb.getBlob('text/plain'));
+//   //       });
+//   //     });
+//   // }
+
+//   // chrome.fileSystem.chooseEntry(
+//   //   {
+//   //     type: ' openWritableFile', accepts: [{
+//   //       extensions: ['html']
+//   //     }]
+//   //   },
+//   //   function (fileEntry) {
+//   //     console.log(fileEntry)
+//   //     //... You can call both fileEntry.file() to read or
+//   //     //... fileEntry.createWriter() to write
+//   //   }
+//   // )
+
+//   if (hotkeys.toString() === copyCommand) {
+//     var copyText = window.getSelection().toString();
+//     var pageUrl = window.location.href
+//     var encodedUrl = encodeURI(pageUrl.split('#')[0])
+//     if (copyText) {
+//       encodedUrl += '#:~:text=' + copyText
+//       const linkData = {
+//         "text": copyText,
+//         "href": encodeURIComponent(encodedUrl),
+//         "title": document.title,
+//         "id": guid(),
+//         "type": 'smartlink-inline',
+//         "data-target-id": encodeURIComponent(encodedUrl),
+//         "data-target-type": 'webs',
+//         "data-target-origin-text": copyText
+//       }
+//       chrome.extension.sendMessage(linkData);
+//     }
+//   }
+// }

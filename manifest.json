@@ -20,7 +20,9 @@
   },
   "permissions": [
     "clipboardRead",
-    "clipboardWrite"
+    "clipboardWrite",
+    "fileSystem",
+    "https://www.huleen.com/*"
   ],
   "content_scripts": [
     {

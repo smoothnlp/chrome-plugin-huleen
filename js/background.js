@@ -8,7 +8,7 @@ chrome.extension.onMessage.addListener(
     } else if (req.type === "smartlink-inline") {
       if (req.text && req.text.length > 0) {
         var el = document.createElement('div');
-        el.innerHTML = `
+        const linkText = `
           <a
             href="${req.href}"
             title="${req.title}" 
@@ -18,6 +18,7 @@ chrome.extension.onMessage.addListener(
             data-target-type="webs"
             data-target-origin-text="${req.text}">${req.text}</a>
           `
+        el.innerHTML = linkText
         el.contentEditable = "true";
         document.body.appendChild(el);
         el.unselectable = "off";
