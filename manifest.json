@@ -21,7 +21,6 @@
   "permissions": [
     "clipboardRead",
     "clipboardWrite",
-    "fileSystem",
     "https://www.huleen.com/*"
   ],
   "content_scripts": [
